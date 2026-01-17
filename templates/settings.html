@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>设置 - Main Nav</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen pb-20">
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <h1 class="text-xl font-bold text-gray-800">系统设置</h1>
+                <a href="/" class="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    返回首页
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 mt-8 grid gap-8">
+        
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold mb-4 border-l-4 border-blue-500 pl-3">全局外观</h2>
+            <form action="/settings/update" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-2">
+                    <label class="block text-sm font-bold text-gray-700 mb-1">网站标题</label>
+                    <input type="text" name="title" value="{{ .Settings.Title }}" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">主页背景图 (URL)</label>
+                    <input type="text" name="bg_dashboard" value="{{ .Settings.BgImageDashboard }}" class="w-full p-2 border rounded" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">登录页背景图 (URL)</label>
+                    <input type="text" name="bg_login" value="{{ .Settings.BgImageLogin }}" class="w-full p-2 border rounded" placeholder="https://...">
+                </div>
+                <div class="col-span-2 text-right">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">保存设置</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold mb-4 border-l-4 border-green-500 pl-3">分类管理</h2>
+            
+            <form action="/category/add" method="POST" class="flex gap-2 mb-6 p-4 bg-gray-50 rounded">
+                <input type="text" name="name" placeholder="新分类名称" required class="flex-1 p-2 border rounded">
+                <input type="number" name="sort_order" placeholder="排序(0-99)" value="0" class="w-24 p-2 border rounded">
+                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">添加</button>
+            </form>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-2 text-left">ID</th>
+                            <th class="px-4 py-2 text-left">名称</th>
+                            <th class="px-4 py-2 text-left">排序</th>
+                            <th class="px-4 py-2 text-right">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ range .Categories }}
+                        <tr class="border-t">
+                            <td class="px-4 py-2 text-gray-500">{{ .ID }}</td>
+                            <td class="px-4 py-2 font-medium">{{ .Name }}</td>
+                            <td class="px-4 py-2">{{ .SortOrder }}</td>
+                            <td class="px-4 py-2 text-right">
+                                <form action="/category/delete" method="POST" onsubmit="return confirm('确定删除分类【{{.Name}}】及其下所有网站吗？');" class="inline">
+                                    <input type="hidden" name="id" value="{{ .ID }}">
+                                    <button type="submit" class="text-red-500 hover:text-red-700">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+            <h2 class="text-lg font-bold mb-4 border-l-4 border-purple-500 pl-3">添加网站</h2>
+            
+            <form action="/site/add" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm text-gray-700">网站名称</label>
+                    <input type="text" name="name" required class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700">URL 链接</label>
+                    <input type="text" name="url" required placeholder="https://" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700">图标 URL</label>
+                    <input type="text" name="icon" placeholder="https://.../icon.png" class="w-full p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-700">所属分类</label>
+                    <select name="category_id" class="w-full p-2 border rounded bg-white">
+                        {{ range .Categories }}
+                        <option value="{{ .ID }}">{{ .Name }}</option>
+                        {{ end }}
+                    </select>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm text-gray-700">描述</label>
+                    <input type="text" name="description" class="w-full p-2 border rounded">
+                </div>
+                <div class="col-span-2 text-right">
+                    <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">添加网站</button>
+                </div>
+            </form>
+
+            <h3 class="font-bold text-gray-600 mb-2">已添加网站列表</h3>
+            <div class="overflow-x-auto max-h-96 overflow-y-auto border rounded">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-gray-50 sticky top-0">
+                        <tr>
+                            <th class="px-4 py-2 text-left">名称</th>
+                            <th class="px-4 py-2 text-left">URL</th>
+                            <th class="px-4 py-2 text-left">分类</th>
+                            <th class="px-4 py-2 text-right">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ range .Sites }}
+                        <tr class="border-t hover:bg-gray-50">
+                            <td class="px-4 py-2">{{ .Name }}</td>
+                            <td class="px-4 py-2 text-gray-500 truncate max-w-xs">{{ .Url }}</td>
+                            <td class="px-4 py-2">
+                                <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                                    {{ if .Category.Name }}{{ .Category.Name }}{{ else }}未知{{ end }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-2 text-right">
+                                <form action="/site/delete" method="POST" onsubmit="return confirm('删除网站？');" class="inline">
+                                    <input type="hidden" name="id" value="{{ .ID }}">
+                                    <button type="submit" class="text-red-500 hover:text-red-700">删除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

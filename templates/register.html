@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初始化 - Main Nav</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-screen flex items-center justify-center bg-slate-100">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-96">
+        <h2 class="text-2xl font-bold mb-2 text-center text-blue-600">Main Nav</h2>
+        <p class="text-center text-gray-500 mb-6 text-sm">{{ .Message }}</p>
+        <form action="/register" method="POST">
+            <input type="text" name="username" placeholder="管理员用户名" class="w-full p-2 border rounded mb-4 focus:ring-2 focus:ring-blue-500 outline-none">
+            <input type="password" name="password" placeholder="设置密码" class="w-full p-2 border rounded mb-6 focus:ring-2 focus:ring-blue-500 outline-none">
+            <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">创建管理员</button>
+        </form>
+    </div>
+</body>
+</html>
